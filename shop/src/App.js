@@ -1,9 +1,15 @@
+// eslint-disable
+
 import React, {useState} from 'react'
 import logo from './logo.svg';
 import { Navbar, Container, Nav, NavDropdown, Jumbotron, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import Data from './data.js'
+import Detail from './Detail.js';
+
+import { Link, Route, Swtich } from 'react-router-dom'
+import Switch from 'react-bootstrap/esm/Switch';
 
 function App() {
 
@@ -17,8 +23,8 @@ function App() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link href="#home">Home</Nav.Link>
-              <Nav.Link href="#link">Link</Nav.Link>
+              <Nav.Link> <Link to="/">Home</Link> </Nav.Link>
+              <Nav.Link> <Link to="/detail">Detail</Link> </Nav.Link>
               <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                 <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
                 <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
@@ -31,44 +37,53 @@ function App() {
         </Container>
       </Navbar>
 
-      <Jumbotron className='background'>
-        <h1>20% Season Off</h1>
-        <p>
-          This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.<br />
-          This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.<br />
-          This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.<br />
-        </p>
-        <p>
-          <Button variant="dark">Learn more</Button>
-        </p>
-      </Jumbotron>
+      <Switch>
+        <Route exact path="/">
+          <Jumbotron className='background'>
+            <h1>20% Season Off</h1>
+            <p>
+              This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.<br />
+              This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.<br />
+              This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.<br />
+            </p>
+            <p>
+              <Button variant="dark">Learn more</Button>
+            </p>
+          </Jumbotron>
 
-      {/* 1. component로 만들어 첨부하기
-      2. component에 데이터바인딩
-      3. component를 반복문 돌리기 */}
+          <div className="container">
+            <div className='row'>
+              {
+                shoes.map(
+                  (a, i)=>{
+                    return (
+                      // shoes[i] 나 a 같은거
+                      <Card shoes={shoes[i]} i={i} key={i}/>
+                    )
+                  }
+                )
+              }
+            </div>
+          </div>
+        </Route>
+
+        <Route path="/detail">
+          <Detail></Detail>
+        </Route>
       
-      <div className="container">
-        <div className='row'>
-          <div className='col-md-4'>
-            <img src="https://codingapple1.github.io/shop/shoes1.jpg" width="100%" />
-            <h4> { shoes[0].title } </h4>
-            <p> { shoes[0].content } & { shoes[0].price }</p>
-          </div>
-          <div className='col-md-4'>
-            <img src="https://codingapple1.github.io/shop/shoes2.jpg" width="100%" />
-            <h4> { shoes[1].title } </h4>
-            <p> { shoes[1].content } & { shoes[1].price }</p>
-          </div>
-          <div className='col-md-4'>
-            <img src="https://codingapple1.github.io/shop/shoes3.jpg" width="100%" />
-            <h4> { shoes[2].title } </h4>
-            <p> { shoes[2].content } & { shoes[2].price }</p>
-          </div>
-        </div>
-      </div>
-
+      </Switch>
     </div>
   );
+}
+
+function Card(props) {
+  return (
+    <div className='col-md-4'>
+      <img src={ 'https://codingapple1.github.io/shop/shoes' + (props.i + 1) + '.jpg' } width="100%" />
+      <h4> { props.shoes.title } </h4>
+      <p> { props.shoes.content } & { props.shoes.price }</p>
+    </div>
+  )
 }
 
 export default App;
