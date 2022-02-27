@@ -1,12 +1,12 @@
-// eslint-disable
+/* eslint-disable */
 
 import React, {useState} from 'react'
-import logo from './logo.svg';
 import { Navbar, Container, Nav, NavDropdown, Jumbotron, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import Data from './data.js'
 import Detail from './Detail.js';
+import axios from 'axios';
 
 import { Link, Route, Swtich } from 'react-router-dom'
 import Switch from 'react-bootstrap/esm/Switch';
@@ -14,17 +14,18 @@ import Switch from 'react-bootstrap/esm/Switch';
 function App() {
 
   let [shoes, shoes변경] = useState(Data);
+  let [재고, 재고변경] = useState([10, 11, 12]);
 
   return (
     <div className="App">
       <Navbar bg="light" expand="lg">
         <Container>
-          <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
+          <Navbar.Brand href="#home">ShoesShop</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link> <Link to="/">Home</Link> </Nav.Link>
-              <Nav.Link> <Link to="/detail">Detail</Link> </Nav.Link>
+              <Nav.Link as={Link} to="/">Home </Nav.Link>
+              <Nav.Link as={Link} to="/detail">Detail </Nav.Link>
               <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                 <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
                 <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
@@ -64,11 +65,26 @@ function App() {
                 )
               }
             </div>
+            <button className='btn btn-primary' onClick={()=>{
+
+              //axios.post('서버URL', {id: 'leehyejin', pw: '1234'}).then() // POST 방법
+
+              // 로딩 중이라는 UI 띄움
+              axios.get('https://codingapple1.github.io/shop/data2.json')
+              .then((result)=>{
+                // 로딩 중이라는 UI 안 보이게 처리
+                shoes변경( [...shoes, ...result.data] );
+              })
+              .catch(()=>{
+                // 로딩 중이라는 UI 안 보이게 처리
+                console.log('실패했어요')
+              })
+            }}>더보기</button>
           </div>
         </Route>
 
-        <Route path="/detail">
-          <Detail></Detail>
+        <Route path="/detail/:id">
+          <Detail shoes={shoes} 재고={재고} 재고변경={재고변경} ></Detail>
         </Route>
       
       </Switch>
