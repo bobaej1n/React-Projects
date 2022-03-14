@@ -1,8 +1,14 @@
-import axios from 'axios';
-import React, {useEffect, useState} from 'react'
+
+import React, {useContext, useEffect, useState} from 'react'
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components'
 import './Detail.scss';
+import {재고context} from './App.js'
+
+import { CSSTransition } from "react-transition-group";
+
+import { Nav } from 'react-bootstrap';
+import { connect } from 'react-redux';
 
 let 박스 = styled.div`
   padding : 20px;
@@ -23,6 +29,10 @@ function Detail(props) {
 
   let [알림, 알림변경] = useState(true);
   let [input, input변경] = useState('');
+  let [누른탭, 누른탭변경] = useState(0);
+  let [스위치, 스위치변경] = useState(false);
+
+  let 재고 = useContext(재고context);
 
   useEffect(()=>{
     //axios.get(); // Detail 컴포넌트 로드 시 ajax로 데이터를 가져오고 싶을 때
@@ -51,31 +61,78 @@ function Detail(props) {
           <img src="https://codingapple1.github.io/shop/shoes1.jpg" width="100%" />
         </div>
         <div className="col-md-6 mt-4">
-          <h4 className="pt-5">{찾은상품.title}</h4>
-          <p>{찾은상품.content}</p>
-          <p>{찾은상품.price}</p>
-          <Info 재고={props.재고}></Info>
-          <button className="btn btn-danger" onClick={()=>{ props.재고변경([9,11,12]) }}>주문하기</button>
+          <h4 className="pt-5">{ 찾은상품.title }</h4>
+          <p>{ 찾은상품.content }</p>
+          <p>{ 찾은상품.price }</p>
+          <Info 재고={ props.재고 }></Info>
+          <button className="btn btn-danger" onClick={() => {
+             props.재고변경([9,11,12]);
+             props.dispatch({ type : '항목추가', payload : { id : 2,  name : '새로운상품', quan : 1 } });
+             history.push('/cart');
+           }}>주문하기</button>
           &nbsp;
-          <button className="btn btn-danger" onClick={ ()=>{ history.goBack() } }>뒤로가기</button>
+          <button className="btn btn-danger" onClick={ () => { history.goBack() } }>뒤로가기</button>
         </div>
       </div>
+
+      <Nav className="mt-5" variant='tabs' defaultActiveKey="link-0"  >
+        <Nav.Item>
+          <Nav.Link eventKey="link-0" onClick={() => { 스위치변경(false); 누른탭변경(0) }} >Active</Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link eventKey="link-1" onClick={() => { 스위치변경(false); 누른탭변경(1) }}>Option1</Nav.Link>
+        </Nav.Item>
+      </Nav>
+
+      <CSSTransition in={ 스위치 } classNames="wow" timeout={ 500 }>
+        <TabContent 누른탭= { 누른탭 } 스위치변경={ 스위치변경 }></TabContent>
+      </CSSTransition>
+      
     </div> 
   )
 }
 
+function TabContent(props) {
+
+  useEffect(()=>{
+    props.스위치변경(true);
+  });
+
+  if (props.누른탭 === 0) {
+    return <div>0번째 내용입니다.</div>
+  } else if (props.누른탭 === 1) {
+    return <div>1번째 내용입니다.</div>
+  } else {
+    return <div>2번째 내용입니다.</div>
+  }
+  
+}
+
 function Info(props) {
+
   return (
     <p>재고 : { props.재고[0] }</p>
   )
+
 }
 
 function Alert() {
+
   return (
     <div className="my-alert2">
     <p>재고가 얼마 남지 않았습니다</p>
   </div>
   )
+
 }
 
-export default Detail;
+function state를props화(state) {
+  return {
+      state : state.reducer,
+      alert열렸니 : state.reducer2
+  }
+}
+
+export default connect(state를props화)(Detail);
+
+//export default Detail;

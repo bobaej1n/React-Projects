@@ -1,15 +1,18 @@
 /* eslint-disable */
 
-import React, {useState} from 'react'
+import React, {useContext, useState} from 'react'
 import { Navbar, Container, Nav, NavDropdown, Jumbotron, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import Data from './data.js'
 import Detail from './Detail.js';
 import axios from 'axios';
+import Cart from './Cart.js';
 
 import { Link, Route, Swtich } from 'react-router-dom'
 import Switch from 'react-bootstrap/esm/Switch';
+
+export let 재고context = React.createContext();
 
 function App() {
 
@@ -53,18 +56,22 @@ function App() {
           </Jumbotron>
 
           <div className="container">
+
+            <재고context.Provider value={ 재고 }>
+
             <div className='row'>
               {
-                shoes.map(
-                  (a, i)=>{
+                shoes.map((a, i)=>{
                     return (
                       // shoes[i] 나 a 같은거
-                      <Card shoes={shoes[i]} i={i} key={i}/>
+                      <Card shoes={ shoes[i] } i={ i } key={ i }/>
                     )
                   }
                 )
               }
             </div>
+
+            </재고context.Provider>
             <button className='btn btn-primary' onClick={()=>{
 
               //axios.post('서버URL', {id: 'leehyejin', pw: '1234'}).then() // POST 방법
@@ -84,7 +91,14 @@ function App() {
         </Route>
 
         <Route path="/detail/:id">
-          <Detail shoes={shoes} 재고={재고} 재고변경={재고변경} ></Detail>
+
+          <재고context.Provider value={ 재고 }>
+            <Detail shoes={shoes} 재고={ 재고 } 재고변경={ 재고변경 } ></Detail>
+          </재고context.Provider>
+        </Route>
+
+        <Route path="/cart">
+          <Cart></Cart>
         </Route>
       
       </Switch>
@@ -93,13 +107,22 @@ function App() {
 }
 
 function Card(props) {
+  
+let 재고 = useContext(재고context);
+
   return (
     <div className='col-md-4'>
       <img src={ 'https://codingapple1.github.io/shop/shoes' + (props.i + 1) + '.jpg' } width="100%" />
       <h4> { props.shoes.title } </h4>
       <p> { props.shoes.content } & { props.shoes.price }</p>
+      <Test></Test>
     </div>
   )
+}
+
+function Test() {
+  let 재고 = useContext(재고context);
+  return <p>{ 재고[0] }</p>
 }
 
 export default App;
